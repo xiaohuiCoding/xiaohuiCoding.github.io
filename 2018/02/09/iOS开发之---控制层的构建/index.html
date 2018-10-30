@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>控制层的构建（一） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在我前面的两篇文章里面分别对MVC框架中的M层的定义和构建方法进行了深入的介绍和探讨。这篇文章则是想深入的介绍一下我们应该如何去构建控制层。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="控制层的构建（一）">
+<meta property="og:url" content="http://yoursite.com/2018/02/09/iOS开发之---控制层的构建/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="在我前面的两篇文章里面分别对MVC框架中的M层的定义和构建方法进行了深入的介绍和探讨。这篇文章则是想深入的介绍一下我们应该如何去构建控制层。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-04-13T05:03:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="控制层的构建（一）">
+<meta name="twitter:description" content="在我前面的两篇文章里面分别对MVC框架中的M层的定义和构建方法进行了深入的介绍和探讨。这篇文章则是想深入的介绍一下我们应该如何去构建控制层。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-iOS开发之---控制层的构建" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/02/09/iOS开发之---控制层的构建/" class="article-date">
+  <time datetime="2018-02-09T09:35:37.000Z" itemprop="datePublished">2018-02-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      控制层的构建（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在我前面的两篇文章里面分别对MVC框架中的M层的定义和构建方法进行了深入的介绍和探讨。这篇文章则是想深入的介绍一下我们应该如何去构建控制层。<a id="more"></a>控制层是联系视图层和模型层的纽带。现在也有非常多的文章宣扬所谓的去控制层或者弱化控制层的作用，觉得这部分是一个鸡肋，他会使得应用变得臃肿不堪。那么他是否有存在的必要呢？<br>一般的应用场景里面，我们都需要将各种界面呈现给用户，然后用户通过某些操作来达到某个目标。从上面的场景中可以提取出呈现、操作、目标三个关键字。要呈现出什么以及要完成什么目标我们必须要通过具体操作才能达成，也就是说是通过操作来驱动界面的不断变化以及服务目标的不断达成，操作是联系界面和目标的纽带。为了表征这种真实的场景，在软件建模和设计实现中也应如此。我想这也就是MVC框架这种应用模型设计的初衷吧。在MVC框架中V负责呈现C负责操作而M则负责目标。而且这种设计还有如下更多的考量：</p>
+<p>视图界面千变万化，会根据用户的体验不停的升级和优化，甚至同一个功能的前后两个版本都有完全不同的差异，或者某些视图界面会分散到其他视图界面中去，又或原来分散的视图界面又聚合到某个新视图界面中来。也就是说视图呈现部分是变化最大以及持久性最短的一个部分。<br>模型(服务)则相对稳定，他只是提供了某些具体的基础业务服务，而且这些服务更多的是服务水平的升级而非服务的完全改变。因此模型部分是变化最小且持久性最长的一个部分。<br>一般情况下我们对视图界面上的操作控制需要调用多个服务来完成，或者不同的界面上的呈现可能会由同一个服务来支撑。因此我们不能将界面呈现和服务目标进行一对一的强行绑定，我们需要将呈现和模型进行解耦处理。<br>控制层的引入正是解决了上面的这些矛盾，他将视图和模型的关联减少到最低，同时也是将易变的和不变这种矛盾体进行了化解。控制层就是一个中介者（参考设计模式中的中介者模式）我们应该把具体的操作交给控制层来完成，并且由控制层来驱动视图的呈现和服务的提供。这看来好像是一种最优的解决方案。</p>
+<p>控制器–功能的划分边界<br>那么控制层除了具备处理操作以及实现视图和模型之间联系的纽带之外，还应该具有什么特征呢？</p>
+<p>应用程序从使用者的角度来看他其实就是能够提供某种能力的功能的集合。每个功能都具有对应的展示效果以及提供对应的服务。而且有些功能又可以细分为更多的小功能。对于开发者来说功能是一种应用纵向的切分。开发者更喜欢将他说成为模块单元或者说是功能。每个功能能够提供一个从界面到业务逻辑的完整单元，而且功能之间一般都比较独立，功能之间通常通过接口来进行交互。这样设计的好处是有利于降低系统内模块之间的依赖耦合性，也有利于程序员之间的分工合作和任务划分。因此无论从使用者还是开发者的角度来看功能划分都是一种非常好的应用程序构造方式。功能的展现在设计上我们可以理解为通过视图来完成，而业务逻辑实现则是由模型层来完成，所以必须要存在一个实体来将这两者关联起来，并且起到统筹和控制的能力。这个实体由控制层的控制器来实现和担当最合适。因此在实践中我们对功能的实现和划分也通常是以控制器为单位来构建的，控制器是工作在控制层。也就是说我们在实现某个功能时通常是为这个功能建立一个对应的控制器来实现的，控制器负责视图的构建和业务模型的调用，而思想下的框架就是经典的MVC框架！</p>
+<p>控制层在各平台下的实现<br>目前主流的iOS和Android移动开发平台所提供的都是MVC应用框架，尤其是对于控制层的实现更是几乎提供了相同的能力和方式。两个平台的控制层的实体都是由对应的控制器类来实现的(iOS叫UIViewController, Android叫Activity)。而且这两个平台上都提供了控制器的构建，视图的呈现以及到控制器的销毁的流程方法。这种实现机制是一个非常典型的模板方法设计模式，在基类中定义了一个控制器在生命周期内各环节的调用方法，您只需要在派生类中重载这些方法来完成控制器生命周期内各环节所要完成的动作或者处理的事情。为了处理控制器之间的交互或者调用，系统提供了一个导航栈的管理类。导航栈负责各功能控制器的进入和退出，同时管理着所有的控制器。</p>
+<p>相对于iOS的UIViewController来说Android的Activity其实对功能封装得更加彻底。Activity具有跨越进程的调用能力，因此作为组件化的能力更加强大，同时控制器和控制器之间的耦合度也非常得低。对于控制器之间的参数传递都是通过序列化和反序列化来实现的。但是这也在某方面成为了一个缺点，为了解决这个问题，Android系统中又提供了一个叫Fragment类，这是一个较Activity而言的轻量级控制器，目的是为了解决某些大功能需要拆解为多个子功能来实现的问题以及解决功能之间的参数传递的问题。</p>
+<p>iOS视图控制器生命周期的介绍。<br>前面大体介绍了控制层中控制器的实现以及控制器的生命周期，同时也介绍了功能和控制器之间的对应关系，控制器是视图和业务模型之间联系的纽带，因此控制器必须要在生命周期内负责视图的构建、管理视图的呈现、处理用户的操作、以及进行业务模型的调用等工作。为了实现这些能力，控制器中采用了一种模板方法的设计模式来解决这个问题。这里面我主要想介绍一下iOS视图控制器为解决这些问题而所做的实现。我们知道iOS中的视图控制器是叫UIViewController。在这个类中定义了很多的方法来描述控制器所处的状态，而每个从视图控制器派生的类都可以重载对应的方法以便在视图控制器的相应状态下进行逻辑的处理。下面列出了常见的几种状态下的方法以及这种状态下我们通常应该要做的事情：</p>
+<p>init<br>这个是控制器的构造方法</p>
+<p>loadView<br>在这个方法中完成视图的构造。如果你的视图是由Storyboard或者XIB来构建那么你不需要重载这个方法，但是如果你的视图是通过代码构建的话则应该重载这个方法。控制器的默认实现将会找到关联的Storyboard或者XIB中的视图布局描述信息, 如果找到了则根据布局描述来构建要呈现的视图，如果没有找到则会构建出一个默认的空视图。</p>
+<p>viewDidLoad<br>这个方法被调用时表示视图已经构建完毕了，一般在这里构建模型层的业务模型对象，以及一些事件的绑定，委托delegate的设置等工作。如果你是通过代码来构建布局时，不建议在这里进行视图布局的构建而应该将构建的代码写在loadView里面去。</p>
+<p>viewWillAppear<br>视图将要呈现时调用，只有当将一个视图添加到一个窗口UIWindow时视图才会呈现出来，因此这个方法是在将视图添加到窗口前被调用。</p>
+<p>viewDidAppear<br>视图已经呈现到窗口中，这个方法会在视图添加到窗口后被调用。</p>
+<p>viewWillDisappear<br>视图将要从窗口中删除时被调用。</p>
+<p>viewDidDisappear<br>视图已经从窗口中删除时调用。</p>
+<p>dealloc<br>控制器被销毁前被调用。</p>
+<p>如何构建您的控制层<br>如何构建一个控制层是一个非常广泛的命题，需要具体业务具体分析。虽然如此总是还能找到一些共同点和方法论，一个优秀的设计方法，将不会出现所谓的控制器代码膨胀的问题。MVC本身的框架思想非常的优秀，当出现问题时首先要考虑的并不是去替换掉现有的框架而是从设计的角度去优化现有的代码以及逻辑，让整个系统达到一个最优的组合。</p>
+<ol>
+<li>功能文件夹的划分<br>在前面的论述中可以看出视图控制器是功能实现的基本单元，一个视图控制器是一个功能的载体。一个应用中具有多个功能，而一些相似的功能通常组成一个功能集，比如一个应用的注册流程可能会分为好几步；比如说用户体系的各种特性的设置；比如说一个订单的支付部分等等。为了对功能集进行管理，可以将某些功能集下的所有功能放置到一个特定目录中。最终的构成一个应用功能目录树:</li>
+</ol>
+<p>本文摘自：<a href="https://www.jianshu.com/p/02d6397436dc" target="_blank" rel="noopener">欧阳大哥2013</a> </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/02/09/iOS开发之---控制层的构建/" data-id="cjnvsza31000ozl4yp77w525i" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/01/CocoaPods创建私有库（基础篇）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          CocoaPods创建私有pod库（基础篇）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/09/基于CocoaLumberjack封装自定义格式的日志输出类/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">基于CocoaLumberjack封装自定义格式的日志输出类</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

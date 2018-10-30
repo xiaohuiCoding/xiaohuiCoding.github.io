@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>APP首页之UITableView的性能优化---缓存策略 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="###优化缘由：  项目虽然上线了，但是在程序性能方面仍然存在许多不足，其中之一就是：iOS端首页列表在滚动时页面的卡顿，这对用户体验来说是很不友好的，对其进行优化俨然成为了优先级较高的项目任务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APP首页之UITableView的性能优化---缓存策略">
+<meta property="og:url" content="http://yoursite.com/2017/02/17/MISS.U2_1.0首页列表的性能优化---缓存策略/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="###优化缘由：  项目虽然上线了，但是在程序性能方面仍然存在许多不足，其中之一就是：iOS端首页列表在滚动时页面的卡顿，这对用户体验来说是很不友好的，对其进行优化俨然成为了优先级较高的项目任务。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20170217_01.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20170217_02.png">
+<meta property="og:updated_time" content="2018-06-14T03:52:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="APP首页之UITableView的性能优化---缓存策略">
+<meta name="twitter:description" content="###优化缘由：  项目虽然上线了，但是在程序性能方面仍然存在许多不足，其中之一就是：iOS端首页列表在滚动时页面的卡顿，这对用户体验来说是很不友好的，对其进行优化俨然成为了优先级较高的项目任务。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20170217_01.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-MISS.U2_1.0首页列表的性能优化---缓存策略" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/17/MISS.U2_1.0首页列表的性能优化---缓存策略/" class="article-date">
+  <time datetime="2017-02-16T16:00:00.000Z" itemprop="datePublished">2017-02-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      APP首页之UITableView的性能优化---缓存策略
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###优化缘由：</p>
+<hr>
+<p>项目虽然上线了，但是在程序性能方面仍然存在许多不足，其中之一就是：iOS端首页列表在滚动时页面的卡顿，这对用户体验来说是很不友好的，对其进行优化俨然成为了优先级较高的项目任务。</p>
+<a id="more"></a>
+<p>###优化方案调研：<br>众所周知，在iOS开发中UITableView是最常用到的一个UI类之一，几乎所有的APP都会用到，但是用好它却不是那么容易。对于它的优化方案也是多种多样，常见的大概有以下几种：</p>
+<p>####预排版<br>当获取到 API JSON 数据后，把每条 Cell 需要的数据都在后台线程计算并封装为一个布局对象 CellLayout。CellLayout 包含所有文本的 CoreText 排版结果、Cell 内部每个控件的高度、Cell 的整体高度。每个 CellLayout 的内存占用并不多，所以当生成后，可以全部缓存到内存，以供稍后使用。这样，TableView 在请求各个高度函数时，不会消耗任何多余计算量；当把 CellLayout 设置到 Cell 内部时，Cell 内部也不用再计算布局了。对于通常的 TableView 来说，提前在后台计算好布局结果是非常重要的一个性能优化点。为了达到最高性能，你可能需要牺牲一些开发速度，不要用 Autolayout 等技术，少用 UILabel 等文本控件。但如果你对性能的要求并不那么高，可以尝试用 TableView 的预估高度的功能，并把每个 Cell 高度缓存下来。这里有个来自百度知道团队的开源项目可以很方便的帮你实现这一点：FDTemplateLayoutCell。</p>
+<p>####预渲染<br>对于 TableView 来说，Cell 内容的离屏渲染会带来较大的 GPU 消耗。为了避免离屏渲染，你应当尽量避免使用 layer 的 border、corner、shadow、mask 等技术，而尽量在后台线程预先绘制好对应内容。</p>
+<p>####异步绘制<br>当 TableView 快速滑动时，会有大量异步绘制任务提交到后台线程去执行。但是有时滑动速度过快时，绘制任务还没有完成就可能已经被取消了。如果这时仍然继续绘制，就会造成大量的 CPU 资源浪费，甚至阻塞线程并造成后续的绘制任务迟迟无法完成。较好的做法是：尽量快速、提前判断当前绘制任务是否已经被取消；在绘制每一行文本前，调用 isCancelled() 来进行判断，保证被取消的任务能及时退出，不至于影响后续操作。目前有些第三方微博客户端（比如 VVebo、墨客等），使用了一种方式来避免高速滑动时 Cell 的绘制过程，相关实现见这个项目：VVeboTableViewDemo。它的原理是，当滑动时，松开手指后，立刻计算出滑动停止时 Cell 的位置，并预先绘制那个位置附近的几个 Cell，而忽略当前滑动中的 Cell。这个方法比较有技巧性，并且对于滑动性能来说提升也很大，唯一的缺点就是快速滑动中会出现大量空白内容。如果你不想实现比较麻烦的异步绘制但又想保证滑动的流畅性，这是个不错的方案。</p>
+<p>###我的优化方案<br>在查了大量的资料，看了很多UITableView性能优化相关的博客，跑了好几个demo后，根据当前项目的需求，我决定采用缓存策略来优化首页列表的卡顿。我的思路是：用cell计算后的高度作为value，cell对应model的id作为key，将高度缓存至内存中，以供cell再次需要获取高度时使用。</p>
+<p>###优化后的成效<br>可以对比下采用缓存策略后，通过Instruments可以检测出cell在使用高度缓存前后页面滚动时帧率的变化：</p>
+<p>使用前：</p>
+<div align="center"><img src="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20170217_01.png" width="1395" height="968"></div>
+
+<p>使用后：</p>
+<div align="center"><img src="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20170217_02.png" width="1388" height="951"></div>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/17/MISS.U2_1.0首页列表的性能优化---缓存策略/" data-id="cjnvsza2m000bzl4yj24rkqae" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/21/对比github上几款较知名的iOS三方视频播放器/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          对比github上几款较知名的iOS三方视频播放器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/01/17/如何使用Cocoapods实现三方库的更新？/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">在使用Cocoapods管理三方库时，&#34;pod install&#34; 与 &#34;pod update&#34;该如何选择？</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>CocoaPods创建公有pod | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="创建公有pod就是要创建可以让外界引用的pod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CocoaPods创建公有pod">
+<meta property="og:url" content="http://yoursite.com/2018/03/01/CocoaPods创建公有库/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="创建公有pod就是要创建可以让外界引用的pod">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-04-13T05:05:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CocoaPods创建公有pod">
+<meta name="twitter:description" content="创建公有pod就是要创建可以让外界引用的pod">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-CocoaPods创建公有库" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/01/CocoaPods创建公有库/" class="article-date">
+  <time datetime="2018-03-01T07:11:50.000Z" itemprop="datePublished">2018-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CocoaPods创建公有pod
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>创建公有pod就是要创建可以让外界引用的pod</p>
+<a id="more"></a>
+<p>##初级操作</p>
+<p>想要创建一个开源pod库, 首先我们需要注册CocoaPods, 这里使用trunk的方式</p>
+<pre><code>pod trunk register 邮箱地址 &apos;用户名&apos; --verbose
+</code></pre><p>这里我们一般使用github邮箱和用户名, 然后在你的邮箱中会收到确认邮件, 在浏览器中点击链接确认即注册成功, 成功之后</p>
+<pre><code>pod trunk me
+</code></pre><p>查看自己的注册信息, 以后当你有了自己的开源Pod库, 也可以用此方式随时查看自己发布过的Pod</p>
+<p>创建pod工程文件</p>
+<pre><code>pod lib create pod名
+</code></pre><p>通过Cocoapods创建出来的目录本身就在本地的Git管理下，我们需要做的就是给它添加远端仓库，同样去GitHub或其他的Git服务提供商那里创建一个私有的仓库，拿到远程地址，然后进入到创建的pod目录下：</p>
+<pre><code>$ git add .
+$ git commit -s -m &quot;Initial commit of library&quot;
+$ git remote add origin https://github.com/xiaohuiCoding/pod名.git #添加远端仓库
+$ git push origin master #提交到远端仓库
+</code></pre><p>因为podspec文件中获取Git版本控制的项目还需要tag号，所以我们要打上一个tag</p>
+<pre><code>$ git tag -m &quot;first release&quot; 0.1.0
+$ git push --tags #推送tag到远端仓库
+</code></pre><p>做完这些就可以开始编辑podspec文件了，它是一个Ruby文件，将里面对应的字段换成自己的就行了</p>
+<p>编辑完毕后要进行测试，看是否合格</p>
+<pre><code>pod lib lint 
+</code></pre><p>验证无误就可以进入下一步了</p>
+<p>将pod的podspec提交到CocoaPods</p>
+<pre><code>pod trunk push pod名.podspec
+</code></pre><p>成功之后再执行</p>
+<pre><code>pod search pod名
+</code></pre><p>如果提示找不到，就执行</p>
+<pre><code>rm ~/Library/Caches/CocoaPods/search_index.json
+</code></pre><p>然后再次search</p>
+<pre><code>pod search pod名
+</code></pre><p>这个json文件是pod setup成功后生成的, 是用来查找的索引文件，如果搜索失败，就删除再重新搜索，json将会再次生成，不出意外应该就可以搜索成功了</p>
+<p>接着，就可以在自己的项目中引用自己创建的私有pod了</p>
+<pre><code>source &apos;https://github.com/CocoaPods/Specs.git&apos;
+pod &apos;pod名&apos;
+</code></pre><p>##进阶操作</p>
+<p>####1.删除某个公有库</p>
+<p>删除某个pod前先查询自己名下已经发布过的所有公有库相关信息，再搜索下该pod是否存在，进而按版本号针对性的进行删除，该行为不可回退。</p>
+<pre><code>pod trunk me #查询
+pod search pod名
+pod trunk delete pod名 版本号
+</code></pre><p>一般会报黄色警告信息，官方不赞成这种操作，没关系，如果确定要删除就继续执行delete命令，删除完后可查询该pod的信息</p>
+<pre><code>pod trunk info pod名
+[!] No pod found with the specified name.
+</code></pre><p>再执行search命令</p>
+<pre><code>pod search pod名
+[!] Unable to find a pod with name, author, summary, or description matching `pod名`
+</code></pre><p>这样就表示已经删除成功了。</p>
+<p>如果想连远程的该pod也删除了，可直接在github里删除该仓库。</p>
+<p>删除完后可在任意项目的Podfile里添加 pod ‘pod名’，引用下该pod，执行 pod install，如果还能拉取成功，说明pod没更新，那就执行 pod update，接着再次 pod install就拉取失败了，这表示真的删除成功了。</p>
+<p>更多pod trunk的用法请参考：<a href="https://note.leodev.me/2016/04/05/CocoaPods-API-Elaborate-pod-trunk/" target="_blank" rel="noopener">这里</a></p>
+<p>欢迎各路技术小伙伴访问我的Github：<a href="https://github.com/xiaohuiCoding" target="_blank" rel="noopener">https://github.com/xiaohuiCoding</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/01/CocoaPods创建公有库/" data-id="cjnvsza2e0002zl4y8nazocmx" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/22/Git的使用（配置篇）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Git的使用（配置篇）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/01/Block的使用（深悟篇）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Block的使用（深悟篇）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

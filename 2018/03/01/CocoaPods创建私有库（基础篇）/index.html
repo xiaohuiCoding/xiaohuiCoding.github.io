@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>CocoaPods创建私有pod库（基础篇） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="私有pod和公有pod之间没有太多区别, 最主要的区别就是管理他们的spec repo不一样。下面具体说说私有库的创建与更新及遇到的一些坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CocoaPods创建私有pod库（基础篇）">
+<meta property="og:url" content="http://yoursite.com/2018/03/01/CocoaPods创建私有库（基础篇）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="私有pod和公有pod之间没有太多区别, 最主要的区别就是管理他们的spec repo不一样。下面具体说说私有库的创建与更新及遇到的一些坑。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-28T10:01:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CocoaPods创建私有pod库（基础篇）">
+<meta name="twitter:description" content="私有pod和公有pod之间没有太多区别, 最主要的区别就是管理他们的spec repo不一样。下面具体说说私有库的创建与更新及遇到的一些坑。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-CocoaPods创建私有库（基础篇）" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/01/CocoaPods创建私有库（基础篇）/" class="article-date">
+  <time datetime="2018-03-01T07:11:50.000Z" itemprop="datePublished">2018-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CocoaPods创建私有pod库（基础篇）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>私有pod和公有pod之间没有太多区别, 最主要的区别就是管理他们的spec repo不一样。下面具体说说私有库的创建与更新及遇到的一些坑。</p>
+<a id="more"></a>
+<p>什么是spec repo？通俗来说它就是一个容器，所有公开的pod全都在里面，它也是GitHub上一个远程的Git仓库。当你使用了Cocoapods后它就会被clone到本地，放在~/.cocoapods/repos目录下，进入到这个目录就可以看到master文件夹，这就是官方的spec repo。</p>
+<p>既是私有，我们就需要创建一个类似CocoaPods/Specs的仓库来管理私有库的podspec文件, 以供内部人员使用和更新。构建形式有两种, 一种是在私有git服务器上面创建，另一种是在本机中创建。</p>
+<p>这里记录下我在公司内部git服务器上创建私有pod库的过程：</p>
+<p>1.创建远程私有repo并添加到本地</p>
+<p>先在内部网页上合适的路径下创建一个远程的私有repo,再将私有repo添加到~/.cocoapods/repos中</p>
+<pre><code>pod repo add ops-xgn-ios-xgn http://内部地址/XGN-IOS/xgn.git 
+</code></pre><p>注意：ops-xgn-ios-xgn只是本地显示的名字，命名上没什么太多限制，只要别叫master就行了。</p>
+<p>2.创建远程私有pod并关联到本地</p>
+<p>先在内部网页上XGN-IOS的路径下创建一个远程的私有pod，并clone到本地合适的路径下，此时pod文件夹内是空的；再在本地任意路径下创建本地私有pod工程，可用终端命令进行模板化的创建</p>
+<pre><code>pod lib create XGCommonView
+</code></pre><p>注意：创建过程中会提示你选择一些标准，我是这么选的(platform:iOS, language:ObjC, demo:Yes, testing frameworks:None, view based testing:Yes, prefix:XG)，意思很明了。</p>
+<p>再将本地私有pod工程与远程私有pod关联起来，这个很简单，各有各的方法吧，我是将本地创建的私有pod文件夹里面的所有文件全部复制到clone后的pod文件夹里，接着用commit,push将关联一气呵成。</p>
+<p>4.给私有pod添加功能代码文件和所需要的资源，编辑podspec文件，打tag，验证，发布。</p>
+<p>我将平时开发中常用到的一些共用视图类文件提取出来放到pod库名/Classes文件夹中，然后进入Example文件夹执行pod update命令，再打开项目工程可以看到，刚刚添加的组件已经在Pods子工程下Development Pods/XGCommonView中了，然后编辑demo工程，测试组件，我并没有使用提供的测试框架进行测试，这里就先不介绍了。</p>
+<p>需要注意的是创建的模板pod工程会自动安装FBSnapshotTestCase这个三方库，没什么用可以不要，这里需要注意的是每当你向Pod中添加了新的文件或者以后更新了podspec的版本都需要重新执行一遍pod update命令，这是为了更新私有pod所需要安装的其他三方库。</p>
+<p>基本项自查无误后，接下来就要进入正题了，大致需要做以下几件事：</p>
+<pre><code>编辑podspec文件
+将本地变更提交并推送至远程；
+将本次变更打tag并推送至远程；
+验证podspec文件并推送至远程；
+更新本地pod库；
+</code></pre><p>XGCommonView.podspec是一个Ruby文件，将里面对应的字段换成自己的就行了。下面是一个最简单的模板，复杂一些的配置项会多一些，当然坑也多一些；</p>
+<pre><code>Pod::Spec.new do |s|
+s.name             = &apos;XGCommonView&apos;
+s.version          = &apos;0.0.1&apos;
+s.summary          = &apos;Some common views.&apos;
+
+# This description is used to generate tags and improve search results.
+#   * Think: What does it do? Why did you write it? What is the focus?
+#   * Try to keep it short, snappy and to the point.
+#   * Write the description between the DESC delimiters below.
+#   * Finally, don&apos;t worry about the indent, CocoaPods strips it!
+
+s.description      = &lt;&lt;-DESC
+TODO: Add long description of the pod here.
+DESC
+
+s.homepage         = &apos;http://git.ops.com/XGN-IOS/XGCommonView&apos;
+# s.screenshots     = &apos;www.example.com/screenshots_1&apos;, &apos;www.example.com/screenshots_2&apos;
+s.license          = { :type =&gt; &apos;MIT&apos;, :file =&gt; &apos;LICENSE&apos; }
+s.author           = { &apos;username&apos; =&gt; &apos;email&apos; }
+s.source           = { :git =&gt; &apos;http://git.ops.com/XGN-IOS/XGCommonView.git&apos;, :tag =&gt; s.version.to_s }
+# s.social_media_url = &apos;https://twitter.com/&lt;TWITTER_USERNAME&gt;&apos;
+
+s.ios.deployment_target = &apos;8.0&apos;
+
+s.source_files = &apos;XGCommonView/Classes/**/*&apos;
+
+# s.resource_bundles = {
+#   &apos;XGCommonView&apos; =&gt; [&apos;XGCommonView/Assets/*.png&apos;]
+# }
+
+# s.public_header_files = &apos;Pod/Classes/**/*.h&apos;
+# s.frameworks = &apos;UIKit&apos;, &apos;MapKit&apos;
+# s.dependency &apos;AFNetworking&apos;, &apos;~&gt; 2.3&apos;
+</code></pre><p>end</p>
+<p>每次变更Classes文件夹中的内容都需要先提交再打tag，因为podspec文件中获取Git版本控制的项目需要tag号，所以每次变更都需要打一个tag；</p>
+<pre><code>$ git tag -m &quot;first release&quot; 0.0.1
+$ git push --tags 
+</code></pre><p>验证podspec文件，看你配置的东西是否合乎标准和正确无误；</p>
+<pre><code>pod lib lint 
+</code></pre><p>验证无误就可以进入下一步了</p>
+<p>将私有pod的podspec提交到远程的repo</p>
+<pre><code>pod repo push ops-xgn-ios-xgn XGCommonView.podspec
+</code></pre><p>成功之后再执行</p>
+<pre><code>pod search XGCommonView
+</code></pre><p>如果提示找不到，就执行</p>
+<pre><code>rm ~/Library/Caches/CocoaPods/search_index.json
+</code></pre><p>然后再次search</p>
+<pre><code>pod search XGCommonView
+</code></pre><p>这个json文件是pod setup成功后生成的, 是用来查找的索引文件，如果搜索失败，就删除再重新搜索，json将会再次生成，不出意外应该就可以搜索成功了</p>
+<p>接着，就可以在自己的项目中引用自己创建的私有pod了</p>
+<pre><code>source &apos;http://git.ops.com/XGN-IOS/xgn.git&apos;
+pod &apos;XGCommonView&apos;
+</code></pre><p>以上是简单的创建与使用，进阶版使用请看下篇！</p>
+<p>欢迎访问我的Github：<a href="https://github.com/xiaohuiCoding" target="_blank" rel="noopener">https://github.com/xiaohuiCoding</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/01/CocoaPods创建私有库（基础篇）/" data-id="cjnvsza2g0005zl4yqkdtnqtc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/01/Block的使用（初窥篇）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Block的使用（初窥篇）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/02/09/iOS开发之---控制层的构建/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">控制层的构建（一）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

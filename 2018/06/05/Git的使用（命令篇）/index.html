@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Git的使用（命令篇） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="整理一些常用的Git命令及使用Git命令时遇到的问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git的使用（命令篇）">
+<meta property="og:url" content="http://yoursite.com/2018/06/05/Git的使用（命令篇）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="整理一些常用的Git命令及使用Git命令时遇到的问题。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-05T06:02:17.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git的使用（命令篇）">
+<meta name="twitter:description" content="整理一些常用的Git命令及使用Git命令时遇到的问题。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Git的使用（命令篇）" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/05/Git的使用（命令篇）/" class="article-date">
+  <time datetime="2018-06-04T16:00:00.000Z" itemprop="datePublished">2018-06-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Git的使用（命令篇）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>整理一些常用的Git命令及使用Git命令时遇到的问题。</p>
+<a id="more"></a>
+<p>1.git config</p>
+<pre><code>a.查看用户名和邮箱
+git config user.name
+git config user.email
+
+b.修改用户名和邮箱
+
+全局修改：
+git config --global user.name &quot;xxx&quot;
+git config --global user.email &quot;xxx&quot;
+
+针对某个项目修改：
+cd 项目对应的的本地仓库路径
+git config user.name &quot;xxx&quot;
+git config user.email &quot;xxx&quot;
+</code></pre><p>注：用户名和邮箱地址是本地Git客户端的一个变量，当你安装Git后首先要做的事情就是设置你的用户名和邮箱地址 ，因为每次Git提交都会使用这个用户名和邮箱地址来记录提交信息。所以这个用户名和邮箱地址只是用来记录本地Git提交信息的一个标识，和你远程仓库账号下的用户名或邮箱地址没有任何关系。</p>
+<p>2.git clone</p>
+<pre><code>git clone 远程仓库地址   #克隆master分支
+git clone -b 分支名 远程仓库地址   #克隆指定的某个分支
+</code></pre><p>3.git branch</p>
+<pre><code>git branch -a   #查看所有分支
+git branch -r   #查看所有远程分支
+git branch -l   #查看所有本地分支
+</code></pre><p>4.切换分支</p>
+<pre><code>git checkout 分支名
+</code></pre><p>5.在某分支上创建新分支并切换到新分支</p>
+<pre><code>git checkout 某分支名
+git branch 新的分支名
+git checkout 新的分支名
+
+等同于：
+
+git checkout 某分支名
+git checkout -b 新的分支名
+</code></pre><p>6.查看仓库的状态</p>
+<pre><code>git status
+</code></pre><p>7.查看仓库中某文件的变化</p>
+<pre><code>git diff 文件名
+</code></pre><p>8.git commit 时的报错及解决方法</p>
+<pre><code>error: insufficient permission for adding an object to repository database .git/objects
+error: insufficient permission for adding an object to repository database .git/objects
+error: Error building trees
+</code></pre><p>大概的意思是本机对git代码仓库的写权限出了问题，什么？没权限？昨天还好好的呢。。。心里顿时万马奔腾啊。。。网上google了一大堆，答案大体上分两种：</p>
+<p>第一种：sudo chown -R git:git git库</p>
+<p>第二种：sudo chmod 777 -R .git/objects 然后 sudo chown git.git .git/objects</p>
+<p>看样子是需要加权限，试了两把也没搞定，怎么办？这时突然想起了另一种获取本机超级用户权限的方法：</p>
+<pre><code>sudo -s
+</code></pre><p>接着便commit success了!想想也是，不就是权限不够么，直接变成super vip就可以为所欲为了 git push 也会有这样的报错，同理。对了，完事之后记得退出超级权限，不然在pod install时可能会出现在该权限下无法执行pod命令的情况，退出命令是 exit。</p>
+<p>9.git pull </p>
+<p>10.git merge</p>
+<p>11.git push</p>
+<p>12.标签（tag）</p>
+<p>可以针对某一时间点的版本做标记，常用于版本发布。</p>
+<pre><code>git tag v1.0.0-light #创建轻量标签，是指向提交对象的引用
+git tag -a v1.0.0 -m &quot;1.0.0版本&quot; #创建附注标签，是仓库中的一个独立对象，一般推荐这种
+git tag -a v1.0.0 3fbc3e9 #给指定的commit打标签，打标签没必要在head之上，也可在之前的版本上打，这需要你知道某个提交对象的提交信息（可通过git log获取） 
+
+git tag #查看当前分支下的所有标签
+git tag -l &apos;v1.0.*&apos; #查看符合模式的标签
+
+git show v1.0.0 #查看标签的相关信息
+
+git checkout tag名 #切换标签，与切换分支命令相同
+
+git tag -d v1.0.0 #删除标签
+
+通常的git push不会将标签对象提交到git服务器，我们需要进行显式的操作：
+git push origin v1.0.0 #将某个标签提交到git服务器
+git push origin --tags #将本地所有标签一次性提交到git服务器
+
+如果想看之前某个标签状态下的文件，可以这样操作：
+git tag #查看当前分支下的所有标签
+git checkout v1.0.0 #此时会指向打v1.0.0标签时的代码状态，但现在处于一个空的分支上
+cat 文件名 #查看某个文件
+</code></pre><p>13.git stash（储藏）</p>
+<p>日常开发过程中，常见这么一种情况，正在dev分支上进行常规任务的开发，但被临时告知要修复master分支上的一个代号为111的紧急bug，由于任务尚未完成，所以dev分支上的代码不方便直接提交，这怎么办呢？解决办法如下：</p>
+<pre><code>1.将当前的开发任务暂时储藏起来
+  git stash
+
+2.切换到master分支，再在master分支上新建一个分支并切换到新分支，准备修复bug
+  git checkout master
+  git checkout -b bug-111
+
+3.修复完bug后，提交代码并合并至master并删除新分支
+  git add .
+  git commit -m &quot;fix bug 111&quot;
+  git checkout master
+  git merge --no-ff -m &quot;merged fix bug 111&quot; bug-111
+  git branch -d bug-111
+
+4.切换回dev分支，恢复之前未完成的代码
+  git checkout dev 
+  git stash list
+  方法一：
+  git stash apply（恢复stash内容）
+  git stash drop（删除stash内容）
+  方法二：
+  git stash pop（恢复并删除stash内容）
+
+5.如果有多次stash，也可恢复指定的stash
+  git stash list
+  git stash pop stash@{序号}
+</code></pre><p>14.撤销某个分支上的改动</p>
+<pre><code>1.如果只是在工作区作了改动，可以直接进行撤销
+git checkout -- 文件名
+
+2.如果改动已经被添加到了暂存区，就要先撤销暂存区的改动，回到工作区，然后再撤销工作区的改动
+git reset HEAD 文件名
+git checkout -- 文件名
+
+3.如果改动已经被添加到了暂存区并且又作了改动，那就一步一步来咯
+git checkout -- 文件名
+git reset HEAD 文件名
+git checkout -- 文件名
+
+4.撤销本地所有的改动
+git checkout .   #让本地所有改动过的且没有提交的，都回到原来的状态
+git stash   #把所有没有提交的改动暂存到stash里面，可用git stash pop恢复
+git reset --hard 某次提交的编号   #返回到某个节点，不保留改动
+git reset --soft 某次提交的编号   #返回到某个节点，保留改动（试了然而并没找到保留的改动啊）
+</code></pre><p>15.创建本地分支来追踪某个远程分支</p>
+<pre><code>git checkout --track origin/某个远程分支   #创建的分支与远程分支同名
+</code></pre><p><a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">欲知更多请点击这里</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/06/05/Git的使用（命令篇）/" data-id="cjnvsza2y000jzl4y0g7tds3l" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/06/29/Github的几个实用操作/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Github的几个实用操作
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/25/ReactNative（三）/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ReactNative（三）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

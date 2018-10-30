@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>ReactNative（一） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ReactNative简称RN，可以跨平台开发。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactNative（一）">
+<meta property="og:url" content="http://yoursite.com/2018/04/10/ReactNative（一）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ReactNative简称RN，可以跨平台开发。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-04-13T05:05:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ReactNative（一）">
+<meta name="twitter:description" content="ReactNative简称RN，可以跨平台开发。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ReactNative（一）" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/10/ReactNative（一）/" class="article-date">
+  <time datetime="2018-04-10T09:50:03.000Z" itemprop="datePublished">2018-04-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ReactNative（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ReactNative简称RN，可以跨平台开发。</p>
+<a id="more"></a>
+<p><a href="https://reactnative.cn/" target="_blank" rel="noopener">这里推荐一个入门的地方</a></p>
+<p>1.搭建开发环境</p>
+<pre><code>说白了就是安装一堆必要的软件，比如：Homebrew,Node,Yarn以及Visual Studio Code，还需要一台装有Xcode的Mac。
+</code></pre><p>2.新建项目并运行</p>
+<pre><code>react-native init 项目名
+cd 项目所在路径
+react-native run-ios
+</code></pre><p>3.熟悉项目结构</p>
+<pre><code>App.js, app.json, index.js, package.json, yarn.lock五个文件以及node_modules, android, ios三个文件夹
+</code></pre><p>4.写代码前的一些准备</p>
+<p>可以先安装一些助力开发的插件，比如：</p>
+<pre><code>React Native Tools #基础插件
+background #设置代码背景
+Document This #连续两次Ctrl+D可快速添加注释模板
+Dash #选中后可查询
+Auto Rename Tag #自动更新一对标签
+Guides #格式化代码，线条对齐 
+Path Autocomplete #自动补全文件路径
+Project Manager #管理工程
+vscode-icons #文件和文件夹图标化
+</code></pre><p>5.配置用户设置（User Settings）</p>
+<p>Code／首选项／设置 打开配置文件，也可以用快捷键 command+, 直接打开。</p>
+<pre><code>{
+    &quot;window.zoomLevel&quot;: 1,
+
+    //代码智能提醒（目前新版本的VSCode都自带了这个功能）
+    // &quot;files.associations&quot;: {
+    //     &quot;*.js&quot;: &quot;javascriptreact&quot;
+    // },
+
+    //修饰符警告忽略
+    &quot;javascript.implicitProjectConfig.experimentalDecorators&quot;: true,
+
+    &quot;[javascriptreact]&quot;: {},
+
+    //格式化代码，线条对齐
+    &quot;editor.renderIndentGuides&quot;: true,
+
+    &quot;java.errors.incompleteClasspath.severity&quot;: &quot;ignore&quot;,
+
+    &quot;workbench.iconTheme&quot;: &quot;vscode-icons&quot;
+}
+</code></pre><p>基本配置如上，也按需增减，相当于插件的作用吧，比如：”editor.renderIndentGuides”: true这一句就相当于起到了安装Guides插件后的作用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/10/ReactNative（一）/" data-id="cjnvsza2t000fzl4yb6j3fqxu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/12/ReactNative 入门级使用篇/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ReactNative 入门级使用篇
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/23/Cocoapods的一些坑/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Cocoapods的一些坑</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

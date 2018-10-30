@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>基于CocoaLumberjack封装自定义格式的日志输出类 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="###CocoaLumberjack简介 CocoaLumberjack是一个开源工程，为Xcode提供分级打印的策略，源码地址：https://github.com/CocoaLumberjack/CocoaLumberjack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于CocoaLumberjack封装自定义格式的日志输出类">
+<meta property="og:url" content="http://yoursite.com/2017/03/09/基于CocoaLumberjack封装自定义格式的日志输出类/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="###CocoaLumberjack简介 CocoaLumberjack是一个开源工程，为Xcode提供分级打印的策略，源码地址：https://github.com/CocoaLumberjack/CocoaLumberjack">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-14T03:46:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于CocoaLumberjack封装自定义格式的日志输出类">
+<meta name="twitter:description" content="###CocoaLumberjack简介 CocoaLumberjack是一个开源工程，为Xcode提供分级打印的策略，源码地址：https://github.com/CocoaLumberjack/CocoaLumberjack">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-基于CocoaLumberjack封装自定义格式的日志输出类" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/09/基于CocoaLumberjack封装自定义格式的日志输出类/" class="article-date">
+  <time datetime="2017-03-08T16:00:00.000Z" itemprop="datePublished">2017-03-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      基于CocoaLumberjack封装自定义格式的日志输出类
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###CocoaLumberjack简介</p>
+<p>CocoaLumberjack是一个开源工程，为Xcode提供分级打印的策略，源码地址：<a href="https://github.com/CocoaLumberjack/CocoaLumberjack" target="_blank" rel="noopener">https://github.com/CocoaLumberjack/CocoaLumberjack</a></p>
+<a id="more"></a>
+<p>CocoaLumberjack包含几个对象分别可以把Log输出到不同的地方：</p>
+<p>######DDASLLogger 输出到Console.app</p>
+<p>######DDTTYLogger 输出到Xcode控制台</p>
+<p>######DDLogFileManager 输出到文件</p>
+<p>######DDAbstractDatabaseLogger 输出到DB</p>
+<p>使用不同的宏打印不同级别的Log：</p>
+<p>######DDLogError(…) 打印Error级别的Log</p>
+<p>######DDLogWarn(…) 打印Warn级别的Log</p>
+<p>######DDLogInfo(…) 打印Info级别的Log</p>
+<p>######DDLogDebug(…) 打印Debug级别的Log</p>
+<p>######DDLogVerbose(…) 打印Verbose级别的Log</p>
+<p>###自定义格式的封装</p>
+<p>我们可以定制Log的方式，能打印等级、类和方法、代码行数等，只需创建一个类实现DDLogFormatter协议的方法即可：</p>
+<p>#####OC：</p>
+<p>######- (NSString <em>)formatLogMessage:(DDLogMessage </em>)logMessage;</p>
+<p>#####Swift：</p>
+<p>######format(message logMessage: DDLogMessage) -&gt; String?</p>
+<p>Demo地址：<a href="https://github.com/xiaohui2015/CocoaLumberjack_Demo" target="_blank" rel="noopener">https://github.com/xiaohui2015/CocoaLumberjack_Demo</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/09/基于CocoaLumberjack封装自定义格式的日志输出类/" data-id="cjnvsza35000tzl4yo3h5tc2e" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/02/09/iOS开发之---控制层的构建/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          控制层的构建（一）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/03/01/swift版的ZFPlayer/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">swift版的ZFPlayer</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

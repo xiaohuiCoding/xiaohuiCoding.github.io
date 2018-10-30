@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Objective-C --- 类和对象（一） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="谈谈OC中的类和对象，一些术语和常用的操作方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C --- 类和对象（一）">
+<meta property="og:url" content="http://yoursite.com/2018/09/04/Objective-C --- 类和对象（一）/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="谈谈OC中的类和对象，一些术语和常用的操作方法。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20180905_01.png">
+<meta property="og:updated_time" content="2018-09-05T11:42:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Objective-C --- 类和对象（一）">
+<meta name="twitter:description" content="谈谈OC中的类和对象，一些术语和常用的操作方法。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20180905_01.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Objective-C --- 类和对象（一）" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/04/Objective-C --- 类和对象（一）/" class="article-date">
+  <time datetime="2018-09-04T12:27:43.000Z" itemprop="datePublished">2018-09-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Objective-C --- 类和对象（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>谈谈OC中的类和对象，一些术语和常用的操作方法。</p>
+<a id="more"></a>
+<p>1.类（Class）</p>
+<p>OC 中的类是用 Class 类型来表示的，实际上它是一个指向 objc_class 结构体的指针。它的定义如下：</p>
+<pre><code>typedef struct objc_class *Class;
+</code></pre><p>在 objc/runtime.h 源码中可以看到 objc_class 结构体的数据结构，如下：</p>
+<pre><code>struct objc_class {
+    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
+
+#if !__OBJC2__
+    Class _Nullable super_class                              OBJC2_UNAVAILABLE;
+    const char * _Nonnull name                               OBJC2_UNAVAILABLE;
+    long version                                             OBJC2_UNAVAILABLE;
+    long info                                                OBJC2_UNAVAILABLE;
+    long instance_size                                       OBJC2_UNAVAILABLE;
+    struct objc_ivar_list * _Nullable ivars                  OBJC2_UNAVAILABLE;
+    struct objc_method_list * _Nullable * _Nullable methodLists                    OBJC2_UNAVAILABLE;
+    struct objc_cache * _Nonnull cache                       OBJC2_UNAVAILABLE;
+    struct objc_protocol_list * _Nullable protocols          OBJC2_UNAVAILABLE;
+#endif
+
+} OBJC2_UNAVAILABLE;
+</code></pre><p>解释下上述源码中几个字段的含义：</p>
+<p>isa：一个对象所对的应的类里面有一个 isa 指针，指向这个类 Class，同时，类本身也是一个对象，其对应的类里面也有一个 isa 指针，指向的是 Meta Class，也就是元类。</p>
+<p>super_class：指向类的父类，如果该类已经是最顶层的根类(如：NSObject 或 NSProxy)，则父类为NULL。</p>
+<p>cache：用于缓存最近使用的方法。一个接收者对象接收到一个消息时，它会根据isa指针去查找能够响应这个消息的对象。在实际使用中，这个对象只有一部分方法是常用的，很多方法其实很少用或者根本用不上。这种情况下，如果每次消息来时，我们都是methodLists中遍历一遍，性能势必很差。这时，cache就派上用场了。在我们每次调用过一个方法后，这个方法就会被缓存到cache列表中，下次调用的时候runtime就会优先去cache中查找，如果cache没有，才去methodLists中查找方法。这样，对于那些经常用到的方法的调用，但提高了调用的效率。</p>
+<p>2.元类（Meta Class）</p>
+<p>元类是一个类对象所对应的类。当我们向一个对象发送消息时，runtime会在这个对象所属的这个类的方法列表中查找方法；而向一个类发送消息时，会在这个类的meta-class的方法列表中查找。元类存储着一个类的所有类方法。每个类都会有一个单独的meta-class，因为每个类的类方法基本不可能完全相同。元类也是一个类，也可以向它发送一个消息，那么它的isa又是指向什么呢？为了不让这种结构无限延伸下去，Objective-C的设计者让所有的meta-class的isa指向基类的meta-class，以此作为它们的所属类。即，任何NSObject继承体系下的meta-class都使用NSObject的meta-class作为自己的所属类，而基类的meta-class的isa指针是指向它自己。这样就形成了一个完美的闭环。</p>
+<p>通过上面的描述，再加上对objc_class结构体中super_class指针的分析，我们就可以描绘出类及相应meta-class类的一个继承体系了，如下图所示：</p>
+<div align="center"><img src="https://raw.githubusercontent.com/wiki/xiaohuiCoding/blogImages/Blog/iOS/blog_20180905_01.png" width="550" height="575"></div>
+
+
+<p>再来看下 objc_method 的数据结构：</p>
+<pre><code>struct objc_method {
+    SEL _Nonnull method_name                                 OBJC2_UNAVAILABLE;
+    char * _Nullable method_types                            OBJC2_UNAVAILABLE;
+    IMP _Nonnull method_imp                                  OBJC2_UNAVAILABLE;
+}                                                            OBJC2_UNAVAILABLE;
+</code></pre><p>由上看出，OC中实例方法是通过isa找到object所属的class，再在class中找到要调用的method。此可得出结论：类中存储着实例方法。实际上，类中存储着类定义的一切：成员变量、属性列表，遵守的协议等，但不包括类方法。类方法存在哪？答案又是今天的主角——类方法是存在元类中的，此外元类中还存有类的信息(类的版本，名字）。比如发送一个类消息[class aMessage];，class中的isa就指向class的元类，在元类中搜索调用的类方法，搜索层次类似于实例方法的搜索。 </p>
+<p>3.利用 runtime 来操作类和对象</p>
+<p>runtime提供了大量的函数来操作类与对象。类的操作方法大部分是以class_为前缀的，而对象的操作方法大部分是以objc_或object_为前缀。从 objc_class 的结构来看，runtime提供的操作方法主要就是针对这个结构体中的各个字段的。</p>
+<pre><code>获取类名
+class_getName(Class  _Nullable __unsafe_unretained cls)
+
+获取类的父类
+Class c = class_getSuperclass(Class  _Nullable __unsafe_unretained cls)
+等价于：Class c = [NSObject类 superclass];
+
+判断类是否是元类
+class_isMetaClass(Class  _Nullable __unsafe_unretained cls)
+
+
+
+获取实例大小
+class_getInstanceSize(Class  _Nullable __unsafe_unretained cls)
+
+获取类中指定名称实例成员变量的信息
+class_getInstanceVariable(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name)
+
+获取类成员变量的信息
+class_getClassVariable(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name)
+
+添加成员变量
+class_addIvar(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name, size_t size, uint8_t alignment, const char * _Nullable types)
+
+获取整个成员变量列表
+class_copyIvarList(Class  _Nullable __unsafe_unretained cls, unsigned int * _Nullable outCount)
+
+
+
+获取指定的属性
+class_getProperty(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name)
+
+获取属性列表
+class_copyPropertyList(Class  _Nullable __unsafe_unretained cls, unsigned int * _Nullable outCount)
+
+为类添加属性
+class_addProperty(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name, const objc_property_attribute_t * _Nullable attributes, unsigned int attributeCount)
+
+替换类的属性
+class_replaceProperty(Class  _Nullable __unsafe_unretained cls, const char * _Nonnull name, const objc_property_attribute_t * _Nullable attributes, unsigned int attributeCount)
+
+
+
+添加方法
+class_addMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name, IMP  _Nonnull imp, const char * _Nullable types)
+
+获取实例方法
+class_getInstanceMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name)
+
+获取类方法
+class_getClassMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name)
+
+获取所有方法的数组
+class_copyMethodList(Class  _Nullable __unsafe_unretained cls, unsigned int * _Nullable outCount)
+
+替代方法的实现
+class_replaceMethod(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name, IMP  _Nonnull imp, const char * _Nullable types)
+
+返回方法的具体实现
+class_getMethodImplementation(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name)
+class_getMethodImplementation_stret(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull name)
+
+类实例是否响应指定的selector
+class_respondsToSelector(Class  _Nullable __unsafe_unretained cls, SEL  _Nonnull sel)
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/09/04/Objective-C --- 类和对象（一）/" data-id="cjnvsza2o000czl4yvs5hmqz5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/09/04/Objective-C --- 分类和扩展/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Objective-C --- 分类和扩展
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/29/消息推送的原理分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">消息推送的原理分析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

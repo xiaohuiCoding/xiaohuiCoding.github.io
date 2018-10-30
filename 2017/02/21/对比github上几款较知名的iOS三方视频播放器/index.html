@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>对比github上几款较知名的iOS三方视频播放器 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="iOS在视频播放这一块提供了不少优秀的播放基类，如：AVPlayer、AVPlayerViewController、MPMoviePlayerController，这些类都非常强大，但却也仅仅是基类，利用它们只能实现基础的播放功能，至于播放控制面板还得自己单独写，再加上现在的产品设计的多样化，需求的多样化，要想实现一个实用又美观的播放页面着实不易啊，只能自己动手封装播放器或利用优秀的三方轮子了。。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对比github上几款较知名的iOS三方视频播放器">
+<meta property="og:url" content="http://yoursite.com/2017/02/21/对比github上几款较知名的iOS三方视频播放器/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="iOS在视频播放这一块提供了不少优秀的播放基类，如：AVPlayer、AVPlayerViewController、MPMoviePlayerController，这些类都非常强大，但却也仅仅是基类，利用它们只能实现基础的播放功能，至于播放控制面板还得自己单独写，再加上现在的产品设计的多样化，需求的多样化，要想实现一个实用又美观的播放页面着实不易啊，只能自己动手封装播放器或利用优秀的三方轮子了。。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-14T03:46:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对比github上几款较知名的iOS三方视频播放器">
+<meta name="twitter:description" content="iOS在视频播放这一块提供了不少优秀的播放基类，如：AVPlayer、AVPlayerViewController、MPMoviePlayerController，这些类都非常强大，但却也仅仅是基类，利用它们只能实现基础的播放功能，至于播放控制面板还得自己单独写，再加上现在的产品设计的多样化，需求的多样化，要想实现一个实用又美观的播放页面着实不易啊，只能自己动手封装播放器或利用优秀的三方轮子了。。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-对比github上几款较知名的iOS三方视频播放器" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/21/对比github上几款较知名的iOS三方视频播放器/" class="article-date">
+  <time datetime="2017-02-20T16:00:00.000Z" itemprop="datePublished">2017-02-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      对比github上几款较知名的iOS三方视频播放器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>iOS在视频播放这一块提供了不少优秀的播放基类，如：AVPlayer、AVPlayerViewController、MPMoviePlayerController，这些类都非常强大，但却也仅仅是基类，利用它们只能实现基础的播放功能，至于播放控制面板还得自己单独写，再加上现在的产品设计的多样化，需求的多样化，要想实现一个实用又美观的播放页面着实不易啊，只能自己动手封装播放器或利用优秀的三方轮子了。。。</p>
+<a id="more"></a>
+<p>###几个较知名的轮子的对比</p>
+<p>首当其冲当然是大名鼎鼎的ijkplayer啦：<br>这款播放器算是完美无缺了，在视频压缩、转码、上传及播放个部分都做的很赞，其是基于gas-preprocessor、VideoLAN、kewlbear/FFmpeg-iOS-build-script这些项目实现的；但是因为其安装包过百兆了，对于只需基本播放功能或本地缓存功能的APP来说有点过于庞大了，当然如果有直播需求的APP还是可以用的，功能十分强大！</p>
+<p>其次，个人觉得当属ZFPlayer了：<br>这款播放器的功能和封装都写的很好，安装包也不大，二十几兆，很适合相对轻量级的APP使用。有关此轮子剖析的文章很多了，三言两语说不完，我就选取一篇相对全的文章作为参考指南：<a href="http://www.cnblogs.com/machao/p/5669613.html" target="_blank" rel="noopener">http://www.cnblogs.com/machao/p/5669613.html</a></p>
+<p>然后就是WMPlayer了：<br>WMPlayer视频播放器，AVPlayer的封装，继承UIView，想怎么玩就怎么玩。支持播放mp4、m3u8、3gp、mov，网络和本地视频同时支持。全屏和小屏播放同时支持。 cell中播放视频，全屏小屏切换自如。</p>
+<p>还有，MRVLCPlayer：<br>相信Mac用户都很熟悉一款VLC播放器，这款播放器在Mac上表现异常优异，支持的格式几乎涵盖了所有格式（就是这么屌！）。没错，就是它创造者–VideoLAN，开源了一款牛逼的视频播放框架MobileVLCKit！<a href="http://gold.xitu.io/entry/578c304b2e958a0054320503?from=singlemessage&amp;isappinstalled=1" target="_blank" rel="noopener">http://gold.xitu.io/entry/578c304b2e958a0054320503?from=singlemessage&amp;isappinstalled=1</a>)</p>
+<p>还有，JPVideoPlayer、HJDanmakuDemo等很多播放器也都很优秀，轮子虽多，但适合自己项目的轮子才是最好的轮子！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/02/21/对比github上几款较知名的iOS三方视频播放器/" data-id="cjnvsza36000wzl4yjiky81o3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/02/24/ZFPlayer源码分析及基本功能测试/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ZFPlayer源码分析及基本功能测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/17/MISS.U2_1.0首页列表的性能优化---缓存策略/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">APP首页之UITableView的性能优化---缓存策略</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/10/26/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/13/一款分析APP编译时间的工具/">一款分析APP编译时间的工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 分类和扩展/">Objective-C --- 分类和扩展</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/Objective-C --- 类和对象（一）/">Objective-C --- 类和对象（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/29/消息推送的原理分析/">消息推送的原理分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
