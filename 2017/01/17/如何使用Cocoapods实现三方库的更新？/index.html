@@ -7,17 +7,17 @@
   
   <title>使用 pod install 还是 pod update ？ | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="说说Cocoapods的 pod install 与 pod update">
+  <meta name="description" content="说说 Cocoapods的 pod install 与 pod update 的用法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用 pod install 还是 pod update ？">
 <meta property="og:url" content="http://yoursite.com/2017/01/17/如何使用Cocoapods实现三方库的更新？/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="说说Cocoapods的 pod install 与 pod update">
+<meta property="og:description" content="说说 Cocoapods的 pod install 与 pod update 的用法。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-11-04T03:12:24.000Z">
+<meta property="og:updated_time" content="2018-11-04T03:38:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 pod install 还是 pod update ？">
-<meta name="twitter:description" content="说说Cocoapods的 pod install 与 pod update">
+<meta name="twitter:description" content="说说 Cocoapods的 pod install 与 pod update 的用法。">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -86,11 +86,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>说说Cocoapods的 pod install 与 pod update<a id="more"></a></p>
-<p>介绍：<br>许多人开始使用CocodPods的时候认为pod install只是你第一次用CocoaPods建立工程的时候使用，而之后都是使用pod update，但实际上并不是那会事。</p>
+        <p>说说 Cocoapods的 pod install 与 pod update 的用法。<br><a id="more"></a></p>
+<p>介绍：<br>许多人开始使用CocodPods的时候认为 pod install 只是你第一次用CocoaPods建立工程的时候使用，而之后都是 pod update，但实际上并不是那回事儿。</p>
 <p>简单来说，就是：</p>
-<p>1.使用pod install来安装新的库，即使你的工程里面已经有了Podfile，并且已经执行过pod install命令了；所以即使你是添加或移除库，都应该使用pod install。</p>
-<p>2.使用pod update [PODNAME] 只有在你需要更新库到更新的版本时候用。</p>
+<p>1.使用 pod install 来安装新的库，即使你的工程里面已经有了Podfile，并且已经执行过 pod install 命令了；所以即使你是添加或移除库，都应该使用 pod install。</p>
+<p>2.使用 pod update [PODNAME] 只有在你需要更新库到更新的版本时候用。</p>
 <p>详细介绍：<br>pod install ：<br>这个是第一次在工程里面使用pods的时候使用，并且，也是每次你编辑你的Podfile（添加、移除、更新）的时候使用。</p>
 <p>每次运行pod install命令的时候，在下载、安装新的库的同时，也会把你安装的每个库的版本都写在了Podfile.lock文件里面。这个文件记录你每个安装库的版本号，并且锁定了这些版本。</p>
 <p>当你使用pod install它只解决了pods里面，但不在Podfile.lock文件里面的那些库之间的依赖。对于在Podfile.lock里面所列出的那些库，会下载在Podfile.lock里面明确的版本，并不会去检查是否该库有新的版本。对于还不在Podfile.lock里面的库，会找到Podfile里面描述对应版本（例如：pod “MyPod”, “~&gt;1.2”）。</p>
