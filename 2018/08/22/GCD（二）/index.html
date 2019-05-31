@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="说说GCD中的死锁。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-31T08:58:57.816Z">
+<meta property="og:updated_time" content="2019-05-31T09:02:00.146Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCD（二）">
 <meta name="twitter:description" content="说说GCD中的死锁。">
@@ -91,6 +91,7 @@
 <p>###一、什么是死锁？</p>
 <p>停止等待事情的线程会导致多个线程相互维持等待，即死锁。</p>
 <p>多个线程卡住，并互相等待对方完成或执行其它操作；第一个不能完成是因为它在等待第二个的完成；但第二个也不能完成，因为它在等待第一个的完成。</p>
+<p>###二、常见的几种死锁示例</p>
 <p>示例1：</p>
 <pre><code>- (void)viewDidLoad {
     [super viewDidLoad];
@@ -122,7 +123,6 @@
     NSLog(@&quot;4&quot;);
 }
 </code></pre><p>在同一个同步串行队列中，再使用该串行队列同步的执行任务，也会造成死锁。<br>会发现，只是打印了一次，然后就造成了死锁。</p>
-<p>###二、几种常见的死锁示例与分析</p>
 <p>2.线程安全</p>
 <p>在访问数据库或者文件的时候，我们可以使用Serial Dispatch Queue可避免数据竞争问题，代码如下所示：<br>先看看，如果我们在平常编码中，如果要保证某个属性可以线程安全的读写，是如何写的：</p>
 <pre><code>#import &lt;Foundation/Foundation.h&gt;
