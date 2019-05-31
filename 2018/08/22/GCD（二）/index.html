@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="说说GCD中的死锁。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-31T09:03:48.100Z">
+<meta property="og:updated_time" content="2019-05-31T09:06:02.178Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCD（二）">
 <meta name="twitter:description" content="说说GCD中的死锁。">
@@ -88,10 +88,10 @@
       
         <p>说说GCD中的死锁。</p>
 <a id="more"></a>
-<p>###什么是死锁？</p>
+<p>一、什么是死锁？</p>
 <p>停止等待事情的线程会导致多个线程相互维持等待，即死锁。</p>
 <p>多个线程卡住，并互相等待对方完成或执行其它操作；第一个不能完成是因为它在等待第二个的完成；但第二个也不能完成，因为它在等待第一个的完成。</p>
-<p>###常见的几种死锁示例</p>
+<p>二、常见的几种死锁示例</p>
 <p>示例1：</p>
 <pre><code>- (void)viewDidLoad {
     [super viewDidLoad];
