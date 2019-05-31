@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="说说GCD中的死锁。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-31T09:06:02.178Z">
+<meta property="og:updated_time" content="2019-05-31T10:12:15.936Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCD（二）">
 <meta name="twitter:description" content="说说GCD中的死锁。">
@@ -92,7 +92,7 @@
 <p>停止等待事情的线程会导致多个线程相互维持等待，即死锁。</p>
 <p>多个线程卡住，并互相等待对方完成或执行其它操作；第一个不能完成是因为它在等待第二个的完成；但第二个也不能完成，因为它在等待第一个的完成。</p>
 <p>二、常见的几种死锁示例</p>
-<p>示例1：</p>
+<p>示例1</p>
 <pre><code>- (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -102,12 +102,26 @@
 
     NSLog(@&quot;2&quot;);
 }
-</code></pre><p>执行上面的代码，你会发现没有任何打印，这个时候就是发生了死锁，我们禁止在主队列（iOS开发中，主队列是串行队列）中，再同步使用主队列执行任务。</p>
-<p>示例2：</p>
+
+程序运行后会发现，会发现没有任何打印，直接就发生了死锁。
+
+更改如下：
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@&quot;1&quot;);
+    });
+
+    NSLog(@&quot;2&quot;);
+}
+</code></pre><p>总结：禁止在主队列（iOS开发中，主队列是串行队列）中，再同步使用主队列执行任务。</p>
+<p>示例2</p>
 <pre><code>- (void)viewDidLoad {
     [super viewDidLoad];
 
-    dispatch_queue_t queue = dispatch_queue_create(&quot;cn.chutong.www&quot;, DISPATCH_QUEUE_SERIAL);
+    dispatch_queue_t queue = dispatch_queue_create(&quot;com.xiaohui.test&quot;, DISPATCH_QUEUE_SERIAL);
 
     dispatch_sync(queue, ^{
 
@@ -119,11 +133,57 @@
 
         NSLog(@&quot;3&quot;);
     });
-
-    NSLog(@&quot;4&quot;);
 }
-</code></pre><p>在同一个同步串行队列中，再使用该串行队列同步的执行任务，也会造成死锁。<br>会发现，只是打印了一次，然后就造成了死锁。</p>
-<p>2.线程安全</p>
+
+程序运行后会发现，只打印了1，然后就发生了死锁。
+
+更改如下：
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    dispatch_queue_t queue = dispatch_queue_create(&quot;com.xiaohui.test&quot;, DISPATCH_QUEUE_SERIAL);
+
+    dispatch_sync(queue, ^{
+
+        NSLog(@&quot;1&quot;);
+
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSLog(@&quot;2&quot;);
+        });
+
+        NSLog(@&quot;3&quot;);
+    });
+}
+</code></pre><p>总结：禁止在同一个同步(或异步)串行队列中，再使用该串行队列同步的执行任务。</p>
+<p>示例3</p>
+<pre><code>- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    dispatch_queue_t queue = dispatch_queue_create(&quot;com.xiaohui.test&quot;, DISPATCH_QUEUE_SERIAL);
+
+    dispatch_sync(queue, ^{
+
+        NSLog(@&quot;1&quot;);
+
+     //回到主线程发现死循环后面就没法执行了
+        dispatch_sync(queue, ^{
+            NSLog(@&quot;2&quot;);
+        });
+
+        NSLog(@&quot;3&quot;);
+    });
+}
+
+//死循环
+while (1) {
+    //do something
+}
+
+程序运行后会发现，只打印了4，1，然后程序卡住了，发生了死锁。
+
+去掉死循环语句即可。
+</code></pre><p>2.线程安全</p>
 <p>在访问数据库或者文件的时候，我们可以使用Serial Dispatch Queue可避免数据竞争问题，代码如下所示：<br>先看看，如果我们在平常编码中，如果要保证某个属性可以线程安全的读写，是如何写的：</p>
 <pre><code>#import &lt;Foundation/Foundation.h&gt;
 
