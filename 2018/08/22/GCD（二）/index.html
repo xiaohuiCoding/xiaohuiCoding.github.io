@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="说说GCD中的死锁。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-31T10:12:15.936Z">
+<meta property="og:updated_time" content="2019-05-31T10:31:12.557Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GCD（二）">
 <meta name="twitter:description" content="说说GCD中的死锁。">
@@ -183,7 +183,7 @@ while (1) {
 程序运行后会发现，只打印了4，1，然后程序卡住了，发生了死锁。
 
 去掉死循环语句即可。
-</code></pre><p>2.线程安全</p>
+</code></pre><p>三、线程安全</p>
 <p>在访问数据库或者文件的时候，我们可以使用Serial Dispatch Queue可避免数据竞争问题，代码如下所示：<br>先看看，如果我们在平常编码中，如果要保证某个属性可以线程安全的读写，是如何写的：</p>
 <pre><code>#import &lt;Foundation/Foundation.h&gt;
 
